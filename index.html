@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cryptographic Hash Function Demo</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🔐 Simple Hash Function Explorer</h1>
+            <p>Learn about hash functions, collisions, and the birthday paradox</p>
+        </header>
+
+         Hash Function Demo 
+        <section class="card">
+            <h2>1. Try the Hash Function</h2>
+            <p class="description">Type any text and see its hash value (a unique fingerprint)</p>
+            
+            <div class="input-group">
+                <label for="input-text">Your Text:</label>
+                <input type="text" id="input-text" placeholder="Type something..." value="Hello World">
+            </div>
+            
+            <div class="result">
+                <strong>Hash Output:</strong>
+                <div class="hash-output" id="hash-output">-</div>
+            </div>
+
+            <div class="info-box">
+                <strong>💡 What's happening?</strong>
+                <p>Your text is converted into a fixed-size number using math operations. Even a tiny change creates a completely different hash!</p>
+            </div>
+        </section>
+
+         Collision Demo 
+        <section class="card">
+            <h2>2. Find Collisions (Birthday Attack)</h2>
+            <p class="description">See how many random inputs it takes to find two with the same hash</p>
+            
+            <div class="controls">
+                <button id="run-birthday" class="btn-primary">Run Birthday Attack</button>
+                <button id="reset-birthday" class="btn-secondary">Reset</button>
+            </div>
+
+            <div class="stats">
+                <div class="stat-item">
+                    <span class="stat-label">Attempts:</span>
+                    <span class="stat-value" id="attempts">0</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">Unique Hashes:</span>
+                    <span class="stat-value" id="unique-hashes">0</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">Collision Found:</span>
+                    <span class="stat-value" id="collision-status">No</span>
+                </div>
+            </div>
+
+            <div id="collision-result" class="collision-result" style="display: none;">
+                <h3>🎯 Collision Found!</h3>
+                <p><strong>Input 1:</strong> <code id="collision-input1"></code></p>
+                <p><strong>Input 2:</strong> <code id="collision-input2"></code></p>
+                <p><strong>Same Hash:</strong> <code id="collision-hash"></code></p>
+            </div>
+
+            <div class="info-box">
+                <strong>🎂 Birthday Paradox:</strong>
+                <p>Just like how only 23 people are needed for a 50% chance of shared birthdays, hash collisions happen faster than you'd expect!</p>
+            </div>
+        </section>
+
+         Differential Analysis 
+        <section class="card">
+            <h2>3. Differential Analysis</h2>
+            <p class="description">See how small input changes affect the hash output</p>
+            
+            <div class="input-group">
+                <label for="diff-input">Base Text:</label>
+                <input type="text" id="diff-input" placeholder="Type something..." value="password">
+            </div>
+
+            <button id="run-differential" class="btn-primary">Analyze Differences</button>
+
+            <div id="diff-results" class="diff-results"></div>
+
+            <div class="info-box">
+                <strong>🔍 Differential Cryptanalysis:</strong>
+                <p>Good hash functions should produce completely different outputs for similar inputs. This makes them hard to reverse-engineer!</p>
+            </div>
+        </section>
+
+         Statistics 
+        <section class="card">
+            <h2>4. Birthday Paradox Calculator</h2>
+            <p class="description">Calculate collision probability based on hash size</p>
+            
+            <div class="input-group">
+                <label for="hash-bits">Hash Size (bits):</label>
+                <input type="number" id="hash-bits" value="16" min="8" max="32" step="1">
+                <span class="helper-text">Our hash uses 16 bits (65,536 possible values)</span>
+            </div>
+
+            <div class="probability-result">
+                <p><strong>Possible Hash Values:</strong> <span id="possible-values">65,536</span></p>
+                <p><strong>Expected Attempts for 50% Collision:</strong> <span id="expected-attempts">~304</span></p>
+                <p><strong>Expected Attempts for 99% Collision:</strong> <span id="expected-attempts-99">~614</span></p>
+            </div>
+
+            <div class="info-box">
+                <strong>📊 The Math:</strong>
+                <p>For 50% collision probability: √(2 × possible_values) ≈ √(2 × 65,536) ≈ 362 attempts</p>
+            </div>
+        </section>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
