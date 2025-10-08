@@ -198,23 +198,34 @@ runDifferentialBtn.addEventListener("click", runDifferentialAnalysis)
 // ===== SECTION 4: Birthday Paradox Calculator =====
 
 const hashBitsInput = document.getElementById("hash-bits")
+const bitsDisplay = document.getElementById("bits-display")
+const bitsDisplay2 = document.getElementById("bits-display-2")
 const possibleValuesDisplay = document.getElementById("possible-values")
 const expectedAttemptsDisplay = document.getElementById("expected-attempts")
 const expectedAttempts99Display = document.getElementById("expected-attempts-99")
+const calcPossibleValuesDisplay = document.getElementById("calc-possible-values")
+const calcExpected50Display = document.getElementById("calc-expected-50")
 
 function updateBirthdayCalculations() {
   const bits = Number.parseInt(hashBitsInput.value)
   const possibleValues = Math.pow(2, bits)
 
-  // Birthday paradox formula: sqrt(2 * N) for 50% probability
-  const expected50 = Math.sqrt(2 * possibleValues)
+  // Birthday paradox formula: sqrt(2 * N * ln(2)) for 50% probability
+  // This is more accurate than sqrt(2 * N)
+  const expected50 = Math.sqrt(2 * possibleValues * Math.log(2))
 
   // For 99% probability: sqrt(2 * N * ln(1/(1-0.99)))
   const expected99 = Math.sqrt(2 * possibleValues * Math.log(1 / (1 - 0.99)))
 
+  bitsDisplay.textContent = bits
+  bitsDisplay2.textContent = bits
   possibleValuesDisplay.textContent = possibleValues.toLocaleString()
   expectedAttemptsDisplay.textContent = `~${Math.round(expected50).toLocaleString()}`
   expectedAttempts99Display.textContent = `~${Math.round(expected99).toLocaleString()}`
+
+  // Update comparison box values
+  calcPossibleValuesDisplay.textContent = possibleValues.toLocaleString()
+  calcExpected50Display.textContent = `~${Math.round(expected50).toLocaleString()}`
 }
 
 hashBitsInput.addEventListener("input", updateBirthdayCalculations)

@@ -113,11 +113,11 @@ The same principle applies to hash collisions!
 
 For 50% collision probability:
 \`\`\`
-Expected attempts = √(2 × N)
+Expected attempts = √(2 × N × ln(2))
 Where N = number of possible hash values
 
 For our 16-bit hash:
-√(2 × 65,536) = √131,072 ≈ 362 attempts
+√(2 × 65,536 × 0.693) ≈ 301 attempts
 \`\`\`
 
 For 99% collision probability:
@@ -202,6 +202,213 @@ Our simple hash is **educational only** because:
 6. **Differential analysis** tests if small input changes create unpredictable outputs
 7. **Real cryptographic hashes** use 256+ bits and complex mathematics
 
+## How the Birthday Paradox Calculator Works
+
+### Understanding the Calculator Interface
+
+The Birthday Paradox Calculator helps you understand collision probability for different hash sizes. Here's what each number means and how it's calculated:
+
+#### Input: Hash Size (in bits)
+- **What it is:** The slider lets you choose from 8 to 32 bits
+- **What it means:** This determines how many possible hash values exist
+- **Example:** 16 bits (our demo uses this)
+
+#### Output 1: Total Possible Values
+- **Formula:** `2^bits`
+- **What it calculates:** How many unique hashes are possible
+- **Example calculation:**
+  \`\`\`
+  For 16 bits:
+  2^16 = 2 × 2 × 2 × 2... (16 times)
+  = 65,536 possible hash values
+  \`\`\`
+- **Why it matters:** This is the "hash space" - like having 65,536 different boxes to put things in
+
+#### Output 2: 50% Collision Chance
+- **Formula:** `√(2 × N × ln(2))` where N = total possible values
+- **What it calculates:** How many random hashes you need to generate before there's a 50% chance of finding a collision
+- **Example calculation:**
+  \`\`\`
+  For 16 bits (N = 65,536):
+  ln(2) ≈ 0.693
+  √(2 × 65,536 × 0.693)
+  = √90,813
+  ≈ 301 attempts
+  \`\`\`
+- **Why it's surprising:** You only need 301 attempts to have a 50/50 chance of collision, not 32,768 (half of 65,536)!
+
+#### Output 3: 99% Collision Chance
+- **Formula:** `√(2 × N × ln(100))`
+- **What it calculates:** How many attempts for 99% certainty of finding a collision
+- **Example calculation:**
+  \`\`\`
+  For 16 bits (N = 65,536):
+  ln(100) ≈ 4.605
+  √(2 × 65,536 × 4.605)
+  = √604,160
+  ≈ 777 attempts
+  \`\`\`
+- **Why it matters:** Shows that even near-certainty requires far fewer attempts than you'd expect
+
+### The Math Behind the Birthday Paradox
+
+#### Why √(2 × N × ln(2)) Works
+
+The birthday paradox formula comes from probability theory:
+
+**Step 1: Probability of NO collision**
+- First attempt: 100% chance of unique hash (N/N)
+- Second attempt: (N-1)/N chance of being different
+- Third attempt: (N-2)/N chance of being different
+- And so on...
+
+**Step 2: Combined probability**
+\`\`\`
+P(no collision) = (N/N) × ((N-1)/N) × ((N-2)/N) × ... × ((N-k+1)/N)
+\`\`\`
+
+**Step 3: Approximation**
+For large N and small k, this approximates to:
+\`\`\`
+P(no collision) ≈ e^(-k²/2N)
+\`\`\`
+
+**Step 4: Solve for 50% collision**
+\`\`\`
+P(collision) = 1 - P(no collision) = 0.5
+1 - e^(-k²/2N) = 0.5
+e^(-k²/2N) = 0.5
+-k²/2N = ln(0.5)
+k² = -2N × ln(0.5)
+k² = 2N × ln(2)    [since ln(0.5) = -ln(2)]
+k = √(2N × ln(2))
+\`\`\`
+
+Since ln(2) ≈ 0.693, we get:
+\`\`\`
+k ≈ √(2N × 0.693) ≈ 1.177 × √N
+\`\`\`
+
+This is the accurate birthday paradox formula!
+
+#### For 99% Probability
+
+The same process, but solving for 0.99:
+\`\`\`
+1 - e^(-k²/2N) = 0.99
+e^(-k²/2N) = 0.01
+-k²/2N = ln(0.01)
+k² = -2N × ln(0.01)
+k² = 2N × ln(100)
+k = √(2N × ln(100))
+\`\`\`
+
+Since ln(100) ≈ 4.605, we get:
+\`\`\`
+k ≈ √(2N × 4.605)
+\`\`\`
+
+### Real-World Example Walkthrough
+
+Let's compare different hash sizes:
+
+#### 8-bit hash (like a tiny lock)
+- **Possible values:** 2^8 = 256
+- **50% collision:** √(2 × 256 × 0.693) ≈ 19 attempts
+- **99% collision:** √(2 × 256 × 4.605) ≈ 49 attempts
+- **Security:** TERRIBLE - collisions found instantly!
+
+#### 16-bit hash (our demo)
+- **Possible values:** 2^16 = 65,536
+- **50% collision:** √(2 × 65,536 × 0.693) ≈ 301 attempts
+- **99% collision:** √(2 × 65,536 × 4.605) ≈ 777 attempts
+- **Security:** WEAK - collisions found in seconds
+
+#### 32-bit hash (better, but still weak)
+- **Possible values:** 2^32 = 4,294,967,296
+- **50% collision:** √(2 × 4,294,967,296 × 0.693) ≈ 77,163 attempts
+- **99% collision:** √(2 × 4,294,967,296 × 4.605) ≈ 198,933 attempts
+- **Security:** MODERATE - collisions found in minutes
+
+#### 64-bit hash (stronger)
+- **Possible values:** 2^64 ≈ 1.84 × 10^19
+- **50% collision:** √(2 × 1.84 × 10^19 × 0.693) ≈ 1.24 × 10^9 attempts
+- **99% collision:** √(2 × 1.84 × 10^19 × 4.605) ≈ 2.93 × 10^9 attempts
+- **Security:** GOOD - collisions would take centuries with modern computers
+
+#### 256-bit hash (secure!)
+- **Possible values:** 2^256 ≈ 1.16 × 10^77 (more than atoms in the universe!)
+- **50% collision:** √(2 × 1.16 × 10^77 × 0.693) ≈ 3.4 × 10^38 attempts
+- **99% collision:** √(2 × 1.16 × 10^77 × 4.605) ≈ 8.3 × 10^38 attempts
+- **Security:** EXCELLENT - would take billions of years with all computers on Earth!
+
+### Interactive Experiment
+
+**Try this with the calculator:**
+
+1. **Set to 8 bits:**
+   - Notice: Only 256 possible values
+   - Only need ~19 attempts for 50% collision
+   - This is why 8-bit hashes are useless for security!
+
+2. **Set to 16 bits (our demo):**
+   - 65,536 possible values
+   - Need ~301 attempts
+   - Run the Birthday Attack - it usually finds collisions around this number!
+
+3. **Set to 24 bits:**
+   - 16,777,216 possible values
+   - Need ~5,792 attempts
+   - Much better, but still breakable
+
+4. **Set to 32 bits:**
+   - Over 4 billion possible values
+   - Need ~77,163 attempts
+   - Getting harder, but modern computers can do this
+
+5. **Set to 64 bits:**
+   - Over 18 quintillion possible values
+   - Need ~1.24 quintillion attempts
+   - Very secure, but still theoretically breakable
+
+6. **Set to 256 bits:**
+   - Over 1.16 octillion possible values
+   - Need ~3.4 sextillion attempts
+   - Practically unbreakable with current technology
+
+### Why This Matters for Security
+
+**The Square Root Rule:**
+The security of a hash function is approximately the **square root** of its size, not the size itself!
+
+\`\`\`
+Hash Size → Actual Security
+8 bits    → √256 ≈ 16 attempts (USELESS)
+16 bits   → √65,536 ≈ 256 attempts (WEAK)
+32 bits   → √4 billion ≈ 65,536 attempts (MODERATE)
+64 bits   → √18 quintillion ≈ 1.35 quintillion attempts (GOOD)
+128 bits  → √340 undecillion ≈ 18.4 quintillion attempts (STRONG)
+256 bits  → √1.16 octillion ≈ 3.4 sextillion attempts (EXCELLENT)
+\`\`\`
+
+**This is why:**
+- Credit card CVV codes (3 digits = ~10 bits) are weak but have rate limiting
+- Session tokens use 128+ bits
+- Cryptographic hashes use 256+ bits
+- Bitcoin uses SHA-256 (256 bits)
+
+### Summary: Calculator Breakdown
+
+| Calculator Output | Formula | What It Tells You |
+|------------------|---------|-------------------|
+| **Total Possible Values** | 2^bits | Size of the hash space |
+| **50% Collision Chance** | √(2 × N × ln(2)) | Expected attempts for likely collision |
+| **99% Collision Chance** | √(2 × N × ln(100)) | Expected attempts for near-certain collision |
+
+**Key Insight:** The birthday paradox means you need far fewer attempts than intuition suggests. This is why hash functions need to be MUCH larger than you'd think to be secure!
+
+---
+
 ### Practical Applications
 
 - **Passwords:** Stored as hashes, not plain text
@@ -209,17 +416,3 @@ Our simple hash is **educational only** because:
 - **Digital signatures:** Prove authenticity of documents
 - **Blockchain:** Bitcoin uses SHA-256 for mining
 - **Data deduplication:** Identify duplicate files quickly
-
----
-
-## Experiment Ideas
-
-1. **Test the birthday attack multiple times** - Does it always find collisions around 300-400 attempts?
-
-2. **Try different input patterns** in differential analysis - Do numbers vs. letters behave differently?
-
-3. **Calculate for different bit sizes** - How does doubling the bits affect collision probability?
-
-4. **Compare similar strings** - Hash "test1", "test2", "test3" - Are the hashes evenly distributed?
-
-5. **Think about real-world implications** - Why does Bitcoin use 256-bit hashes? What would happen with 16-bit hashes?
